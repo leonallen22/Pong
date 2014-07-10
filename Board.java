@@ -40,7 +40,7 @@ public class Board extends JPanel implements Runnable
         if(animator == null || !inGame)
             animator = new Thread(this);
     }
-    
+        
     public void drawPlayer(Graphics g)
     {
         if(player.isVisible())
@@ -73,8 +73,8 @@ public class Board extends JPanel implements Runnable
         
         g.setColor(Color.black);
         g.fillRect(0,  0, BOARD_WIDTH, BOARD_HEIGHT);
-        g.setColor(Color.white);
-        
+        g.setColor(Color.green);
+                
         if(inGame)
         {
             drawPlayer(g);
