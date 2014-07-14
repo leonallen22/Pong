@@ -17,9 +17,7 @@ public class Player extends Sprite
     
     public void move()
     {
-        int x = (int)bounds.getX();
-        int y = (int)bounds.getY();
-        bounds.setLocation(x+dx, y);
+        bounds.translate(dx, 0);
     }
     
     public void reset()
@@ -34,11 +32,11 @@ public class Player extends Sprite
         switch(key)
         {
             case KeyEvent.VK_LEFT:
-                dx = -2;
+                dx = -4;
                 break;
                 
             case KeyEvent.VK_RIGHT:
-                dx = 2;
+                dx = 4;
                 break;
         }
     }

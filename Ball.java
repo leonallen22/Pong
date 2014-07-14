@@ -2,7 +2,7 @@ import java.awt.Rectangle;
 
 public class Ball extends Sprite
 {
-    private final int INITIAL_X = 300;
+    private final int INITIAL_X = 450;
     private final int INITIAL_Y = 300;
     
     public Ball()
@@ -12,7 +12,7 @@ public class Ball extends Sprite
         height = (int)bounds.getHeight();
         setX(INITIAL_X);
         setY(INITIAL_Y);
-        dy = 1;
+        dy = 3;
     }
     
     public int getdx()
@@ -37,13 +37,13 @@ public class Ball extends Sprite
     
     public void move()
     {
-        int x = (int)bounds.getX();
-        int y = (int)bounds.getY();
-        bounds.setLocation(x+dx, y+dy);
+        bounds.translate(dx, dy);
     }
     
     public void reset()
     {
+        dy = 3;
+        dx = 0;
         bounds.setLocation(INITIAL_X, INITIAL_Y);
     }
 }
