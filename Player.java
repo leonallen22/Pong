@@ -3,7 +3,7 @@ import java.awt.Rectangle;
 
 public class Player extends Sprite
 {
-    private final int INITIAL_X = 450;
+    private final int INITIAL_X = 420;
     private final int INITIAL_Y = 840;
     
     public Player()
