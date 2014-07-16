@@ -19,8 +19,62 @@ public class Opponent extends Sprite
         this.dx = dx;
     }
     
-    public void move()
+    public void move(Ball ball)
     {
+        int x = (int)bounds.getX();
+        
+        if(ball.isReturned())
+        {
+            int ball_x = (int)ball.getX();
+            int ball_dx = ball.getdx();
+            int diff = Math.abs(x - ball_x);
+           
+            if(ball_dx > 2 || ball_dx < -2 || diff > 150)
+            {
+                if(x > ball_x)
+                    setdx(-3);
+               
+                else if(x < ball_x)
+                    setdx(3);
+            }
+            
+            else if(ball_dx > 1 || ball_dx < -1 || diff > 50)
+            {
+                if(x > ball_x)
+                    setdx(-2);
+               
+                else if(x < ball_x)
+                    setdx(2);
+            }
+            
+            else if(ball_dx == 1 || ball_dx == -1 || diff != 0)
+            {
+                if(x > ball_x)
+                    setdx(-1);
+               
+                else if(x < ball_x)
+                    setdx(1);
+            }
+            
+            else
+                setdx(0);
+        }
+        
+        else
+        {
+            if(x != 420)
+            {
+                if(x > 420)
+                    setdx(-3);
+                
+                else
+                    setdx(3);
+            }
+            
+            else
+                setdx(0);
+        }
+        
         bounds.translate(dx, 0);
     }
     

@@ -34,6 +34,11 @@ public class AudioPlayer extends Applet
             clip = AudioSystem.getClip();
             clip.open(sample);
             clips.add(clip);
+            
+            sample = AudioSystem.getAudioInputStream(this.getClass().getResource("resource/miss.wav"));
+            clip = AudioSystem.getClip();
+            clip.open(sample);
+            clips.add(clip);
         }
         catch (LineUnavailableException e)
         {

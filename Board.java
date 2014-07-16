@@ -3,25 +3,18 @@ import java.awt.event.KeyEvent;
 import java.awt.FontMetrics;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Color;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.Line;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JPanel;
 import java.awt.Rectangle;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 public class Board extends JPanel implements Runnable
 {
-    private AudioPlayer audio = new AudioPlayer();
+    private AudioPlayer audio;
+    private ArrayList<Particle> particles;
     private Player player;
     private Opponent opponent;
     private Ball ball;
@@ -31,6 +24,7 @@ public class Board extends JPanel implements Runnable
     private final int BOARD_WIDTH = 840;
     private final int BOARD_HEIGHT = 900;
     private final int DELAY = 5;
+    private final int BURST = 25;
     private int playerScore;
     private int opponentScore;
     
@@ -53,6 +47,7 @@ public class Board extends JPanel implements Runnable
     public void gameInit()
     {
         audio = new AudioPlayer();
+        particles = new ArrayList<Particle>(BURST);
         player = new Player();
         opponent = new Opponent();
         ball = new Ball();
@@ -96,10 +91,12 @@ public class Board extends JPanel implements Runnable
     
     public void resetRound()
     {
-        animator = new Thread();
+        animator = new Thread(this);
+        animator.interrupt();
         player.reset();
         opponent.reset();
         ball.reset();
+        ball.setVisible(true);
     }
     
     public void gameOver(Graphics g)
@@ -126,6 +123,7 @@ public class Board extends JPanel implements Runnable
             drawOpponent(g);
             drawBall(g);
             drawScore(g);
+            renderParticles(g);
             
             Toolkit.getDefaultToolkit().sync();
             g.dispose();
@@ -135,12 +133,51 @@ public class Board extends JPanel implements Runnable
             gameOver(g);
     }
     
+    public void addParticle(int x, int y, int direction)
+    {
+        int particle_dx = 0;
+        int particle_dy = 0;
+        int life = (int)(Math.random()*40);
+        
+        if(Math.random() < 0.5)
+            particle_dx = (int)(Math.random()*5);
+        
+        else
+            particle_dx = (int)(Math.random()*-5);
+        
+        if(direction == 0)
+            particle_dy = (int)(Math.random()*-5);
+                
+        else
+            particle_dy = (int)(Math.random()*5);
+        
+        particles.add(new Particle(x, y, particle_dx, particle_dy, 2, life, Color.green));
+    }
+    
+    public void updateParticles()
+    {
+        for(int i=0; i < particles.size(); ++i)
+        {
+            if(particles.get(i).update())
+                particles.remove(i);
+        }
+    }
+    
+    public void renderParticles(Graphics g)
+    {        
+        for(int i=0; i < particles.size(); ++i)
+        {
+            particles.get(i).render(g);
+        }
+    }
+    
     public void cycle()
     {
         player.move();
         opponent.move(ball);
         ball.move();
         checkCollision();
+        updateParticles();
     }
     
     public void checkCollision()
@@ -184,12 +221,22 @@ public class Board extends JPanel implements Runnable
         else if(ball_y <= 0)
         {
             ball.setVisible(false);
+            audio.playSound(2);
+            
+            for(int i=0; i < 1000; ++i)
+                addParticle((int)ball_x, (int)ball_y, 1);
+            
             ++playerScore;
         }
         
         else if(ball_y > BOARD_HEIGHT)
         {
             ball.setVisible(false);
+            audio.playSound(2);
+            
+            for(int i=0; i < 1000; ++i)
+                addParticle((int)ball_x, (int)ball_y, 0);
+            
             ++opponentScore;
         }
         
@@ -283,6 +330,9 @@ public class Board extends JPanel implements Runnable
                 ball.setdy(-dy);
                 ball.setdx(-6);
             }
+            
+            for(int i=0; i < BURST; ++i)
+                addParticle((int)ball_x, (int)ball_y, 0);
         }
         
         else if(ballbound.intersects(opponentbound))
@@ -375,6 +425,9 @@ public class Board extends JPanel implements Runnable
                 ball.setdy(-dy);
                 ball.setdx(-6);
             }
+            
+            for(int i=0; i < BURST; ++i)
+                addParticle((int)ball_x, (int)ball_y, 1);
         }
     }
     
