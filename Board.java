@@ -5,15 +5,26 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.Color;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.Line;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JPanel;
 import java.awt.Rectangle;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 public class Board extends JPanel implements Runnable
 {
+    private AudioPlayer audio = new AudioPlayer();
     private Player player;
     private Opponent opponent;
     private Ball ball;
-    private Ball possiblePath;
     private String gameOver = "Game Over";
     private Thread animator;
     private boolean inGame = true;
@@ -41,10 +52,10 @@ public class Board extends JPanel implements Runnable
     
     public void gameInit()
     {
+        audio = new AudioPlayer();
         player = new Player();
         opponent = new Opponent();
         ball = new Ball();
-        possiblePath = new Ball();
         playerScore = 0;
         opponentScore = 0;
         
@@ -76,7 +87,6 @@ public class Board extends JPanel implements Runnable
     public void drawScore(Graphics g)
     {
         Font small = new Font("Helvetica", Font.BOLD, 24);
-        FontMetrics m = getFontMetrics(small);
         
         g.setColor(Color.green);
         g.setFont(small);
@@ -128,10 +138,9 @@ public class Board extends JPanel implements Runnable
     public void cycle()
     {
         player.move();
-        opponent.move();
+        opponent.move(ball);
         ball.move();
         checkCollision();
-        predictPath();
     }
     
     public void checkCollision()
@@ -160,6 +169,7 @@ public class Board extends JPanel implements Runnable
         {
             int dx = ball.getdx();
             
+            audio.playSound(0);
             ball.setdx(-dx);
         }
         
@@ -167,6 +177,7 @@ public class Board extends JPanel implements Runnable
         {
             int dx = ball.getdx();
             
+            audio.playSound(0);
             ball.setdx(-dx);
         }
         
@@ -187,6 +198,7 @@ public class Board extends JPanel implements Runnable
             int dy = ball.getdy();
             double relativeintersect = (player.getWidth()/2 + (player_x-1)) - ball_x - 5;
             ball.setReturned(true);
+            audio.playSound(1);
             
             if(relativeintersect <= -30)
             {
@@ -277,7 +289,8 @@ public class Board extends JPanel implements Runnable
         {
             int dy = ball.getdy();
             double relativeintersect = (opponent.getWidth()/2 + (opponent_x-1)) - ball_x - 5;
-            ball.setReturned(true);
+            ball.setReturned(false);
+            audio.playSound(1);
             
             if(relativeintersect <= -30)
             {
@@ -362,23 +375,6 @@ public class Board extends JPanel implements Runnable
                 ball.setdy(-dy);
                 ball.setdx(-6);
             }
-        }
-    }
-    
-    public void predictPath()
-    {
-        if(ball.isReturned())
-        {
-            int x = (int)ball.getX();
-            int y = (int)ball.getY();
-            int dx = ball.getdx();
-            int dy = ball.getdy();
-            
-            possiblePath.setX(x);
-            possiblePath.setY(y);
-            possiblePath.setdx(dx);
-            possiblePath.setdy(dy);
-            opponent.setdx(possiblePath.getdx());
         }
     }
     
