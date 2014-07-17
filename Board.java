@@ -3,8 +3,6 @@ import java.awt.event.KeyEvent;
 import java.awt.FontMetrics;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Color;
 import javax.swing.JPanel;
@@ -23,7 +21,7 @@ public class Board extends JPanel implements Runnable
     private boolean inGame = true;
     private final int BOARD_WIDTH = 840;
     private final int BOARD_HEIGHT = 900;
-    private final int DELAY = 5;
+    private final int DELAY = 6;
     private final int BURST = 25;
     private int playerScore;
     private int opponentScore;
@@ -73,10 +71,40 @@ public class Board extends JPanel implements Runnable
     public void drawBall(Graphics g)
     {
         if(ball.isVisible())
+        {
             g.fillRect((int)ball.getX(), (int)ball.getY(), ball.getWidth(), ball.getHeight());
+            
+            if(Math.random() < 0.3)
+                drawTrail();
+        }
         
         else
             resetRound();
+    }
+    
+    public void drawTrail()
+    {
+        int x = (int)ball.getX()+1;
+        int y = (int)ball.getY()+8;
+        int life = 0;
+        double rand = Math.random();
+        
+        if(rand < 0.3)
+            x += 1;
+        
+        else if(rand < 0.6)
+            x += 2;
+        
+        if(Math.random() < 0.5)
+            y += 2;
+        
+        if(ball.getdx() == 0)
+            life = (int)(Math.random()*50);
+        
+        else
+            life = (int)(Math.random()*40);
+        
+        particles.add(new Particle(x, y, 0, 0, 10, life, Color.green));
     }
     
     public void drawScore(Graphics g)
@@ -91,8 +119,6 @@ public class Board extends JPanel implements Runnable
     
     public void resetRound()
     {
-        animator = new Thread(this);
-        animator.interrupt();
         player.reset();
         opponent.reset();
         ball.reset();
@@ -137,13 +163,107 @@ public class Board extends JPanel implements Runnable
     {
         int particle_dx = 0;
         int particle_dy = 0;
+        int ball_dx = ball.getdx();
         int life = (int)(Math.random()*40);
         
-        if(Math.random() < 0.5)
-            particle_dx = (int)(Math.random()*5);
-        
-        else
-            particle_dx = (int)(Math.random()*-5);
+        switch(ball_dx)
+        {
+            case 6:
+                if(Math.random() < 0.95)
+                    particle_dx = (int)(Math.random()*5);
+                
+                else
+                    particle_dx = (int)(Math.random()*-5);
+                break;
+                
+            case 5:
+                if(Math.random() < 0.9)
+                    particle_dx = (int)(Math.random()*5);
+                
+                else
+                    particle_dx = (int)(Math.random()*-5);
+                break;
+                
+            case 4:
+                if(Math.random() < 0.8)
+                    particle_dx = (int)(Math.random()*5);
+                
+                else
+                    particle_dx = (int)(Math.random()*-5);
+                break;
+                
+            case 3:
+                if(Math.random() < 0.7)
+                    particle_dx = (int)(Math.random()*5);
+                
+                else
+                    particle_dx = (int)(Math.random()*-5);
+                break;
+                
+            case 2:
+                if(Math.random() < 0.6)
+                    particle_dx = (int)(Math.random()*5);
+                
+                else
+                    particle_dx = (int)(Math.random()*-5);
+                break;
+                
+            case 1:
+                if(Math.random() < 0.5)
+                    particle_dx = (int)(Math.random()*5);
+                
+                else
+                    particle_dx = (int)(Math.random()*-5);
+                break;
+                
+            case -1:
+                if(Math.random() < 0.5)
+                    particle_dx = (int)(Math.random()*5);
+                
+                else
+                    particle_dx = (int)(Math.random()*-5);
+                break;
+                
+            case -2:
+                if(Math.random() < 0.4)
+                    particle_dx = (int)(Math.random()*5);
+                
+                else
+                    particle_dx = (int)(Math.random()*-5);
+                break;
+                
+            case -3:
+                if(Math.random() < 0.3)
+                    particle_dx = (int)(Math.random()*5);
+                
+                else
+                    particle_dx = (int)(Math.random()*-5);
+                break;
+                
+            case -4:
+                if(Math.random() < 0.2)
+                    particle_dx = (int)(Math.random()*5);
+                
+                else
+                    particle_dx = (int)(Math.random()*-5);
+                break;
+                
+            case -5:
+                if(Math.random() < 0.1)
+                    particle_dx = (int)(Math.random()*5);
+                
+                else
+                    particle_dx = (int)(Math.random()*-5);
+                break;
+                
+            case -6:
+                if(Math.random() < 0.05)
+                    particle_dx = (int)(Math.random()*5);
+                
+                else
+                    particle_dx = (int)(Math.random()*-5);
+                break;
+        }
         
         if(direction == 0)
             particle_dy = (int)(Math.random()*-5);
@@ -151,7 +271,33 @@ public class Board extends JPanel implements Runnable
         else
             particle_dy = (int)(Math.random()*5);
         
-        particles.add(new Particle(x, y, particle_dx, particle_dy, 2, life, Color.green));
+        particles.add(new Particle(x, y, particle_dx, particle_dy, 10, life, Color.green));
+    }
+    
+    public void addBurst(int x, int y, int direction)
+    {
+        int particle_dx = 0;
+        int particle_dy = 0;
+        int life = 0;
+        
+        for(int i=0; i < 1000; ++i)
+        {
+            life = (int)(Math.random()*70);
+            
+            if(Math.random() < 0.5)
+                particle_dx = (int)(Math.random()*-4);
+                    
+            else
+                particle_dx = (int)(Math.random()*4);
+            
+            if(direction == 0)
+                particle_dy = (int)(Math.random()*-4);
+                    
+            else
+                particle_dy = (int)(Math.random()*4);
+            
+            particles.add(new Particle(x, y, particle_dx, particle_dy, 10, life, Color.green));
+        }
     }
     
     public void updateParticles()
@@ -223,8 +369,7 @@ public class Board extends JPanel implements Runnable
             ball.setVisible(false);
             audio.playSound(2);
             
-            for(int i=0; i < 1000; ++i)
-                addParticle((int)ball_x, (int)ball_y, 1);
+            addBurst((int)ball_x, (int)ball_y, 1);
             
             ++playerScore;
         }
@@ -234,8 +379,7 @@ public class Board extends JPanel implements Runnable
             ball.setVisible(false);
             audio.playSound(2);
             
-            for(int i=0; i < 1000; ++i)
-                addParticle((int)ball_x, (int)ball_y, 0);
+            addBurst((int)ball_x, (int)ball_y, 0);
             
             ++opponentScore;
         }
@@ -460,7 +604,7 @@ public class Board extends JPanel implements Runnable
             beforeTime = System.currentTimeMillis();
         }
     }
-    
+ 
     private class TAdapter extends KeyAdapter
     {
         public void keyReleased(KeyEvent e)

@@ -22,14 +22,17 @@ public class Opponent extends Sprite
     public void move(Ball ball)
     {
         int x = (int)bounds.getX();
+        int y = (int)bounds.getY();
         
         if(ball.isReturned())
         {
             int ball_x = (int)ball.getX();
+            int ball_y = (int)ball.getY();
             int ball_dx = ball.getdx();
-            int diff = Math.abs(x - ball_x);
+            int diff_x = Math.abs(x - ball_x);
+            int diff_y = Math.abs(y - ball_y);
            
-            if(ball_dx > 2 || ball_dx < -2 || diff > 150)
+            if(ball_dx > 2 || ball_dx < -2 || diff_x > 150 || (diff_y < 150 && diff_x > 50))
             {
                 if(x > ball_x)
                     setdx(-3);
@@ -38,7 +41,7 @@ public class Opponent extends Sprite
                     setdx(3);
             }
             
-            else if(ball_dx > 1 || ball_dx < -1 || diff > 50)
+            else if(ball_dx > 1 || ball_dx < -1 || diff_x > 50)
             {
                 if(x > ball_x)
                     setdx(-2);
@@ -47,7 +50,7 @@ public class Opponent extends Sprite
                     setdx(2);
             }
             
-            else if(ball_dx == 1 || ball_dx == -1 || diff != 0)
+            else if(ball_dx == 1 || ball_dx == -1 || diff_x != 0)
             {
                 if(x > ball_x)
                     setdx(-1);

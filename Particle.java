@@ -12,6 +12,7 @@ public class Particle
     private int size;
     private int life;
     private Color color;
+    private String symbol;
     
     public Particle(int x, int y, int dx, int dy, int size, int life, Color color)
     {
@@ -22,6 +23,12 @@ public class Particle
         this.size = size;
         this.life = life;
         this.color = color;
+        
+        if(Math.random() < 0.5)
+            symbol = "0";
+        
+        else
+            symbol = "1";
     }
     
     public boolean update()
@@ -39,17 +46,13 @@ public class Particle
     
     public void render(Graphics g)
     {
-        Font tiny = new Font("Helvetica", Font.BOLD, 10);
+        Font tiny = new Font("Helvetica", Font.BOLD, size);
         
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setColor(color);
         g2d.setFont(tiny);
         //g2d.fillRect(x-(size/2), y-(size/2), size, size);
-        if(Math.random() < 0.5)
-            g2d.drawString("0", x, y);
-        
-        else
-            g2d.drawString("1", x, y);
+        g2d.drawString(symbol, x, y);
         
         g2d.dispose();
     }
