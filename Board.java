@@ -20,7 +20,7 @@ public class Board extends JPanel implements Runnable
     private boolean inGame = true;
     private boolean showHint = true;
     private final int BOARD_WIDTH = 840;
-    private final int BOARD_HEIGHT = 900;
+    private final int BOARD_HEIGHT = 800;
     private final int DELAY = 6;
     private final int BURST = 25;
     private int playerScore;
@@ -116,7 +116,7 @@ public class Board extends JPanel implements Runnable
         
         g.setColor(Color.green);
         g.setFont(small);
-        g.drawString(Integer.toString(playerScore), 830, 850);
+        g.drawString(Integer.toString(playerScore), 830, 750);
         g.drawString(Integer.toString(opponentScore), 20, 30);
     }
     
@@ -574,7 +574,7 @@ public class Board extends JPanel implements Runnable
             
             if(relativeintersect <= -30)
             {
-                if(ball_y <= opponent_y+2)
+                if(ball_y >= opponent_y+2)
                 {
                     ball.setdy(-dy);
                     ball.setdx(6);
@@ -586,7 +586,7 @@ public class Board extends JPanel implements Runnable
             
             else if(relativeintersect <= -25)
             {
-                if(ball_y <= opponent_y+2)
+                if(ball_y >= opponent_y+2)
                 {
                     ball.setdy(-dy);
                     ball.setdx(5);

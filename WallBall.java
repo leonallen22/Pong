@@ -6,10 +6,10 @@ public class WallBall extends JFrame
     public WallBall()
     {
         add(new Board());
-        setTitle("WallBall");
+        setTitle("Pong");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setSize(900, 900);
+        setSize(900, 800);
         setResizable(false);
     }
     
