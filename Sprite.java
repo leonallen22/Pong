@@ -3,28 +3,32 @@ import java.awt.Rectangle;
 public class Sprite
 {
     private boolean visible;
+    protected boolean hit;
     protected Rectangle bounds;
     protected int dx;
     protected int dy;
     protected int width;
     protected int height;
+    protected int recoil;
     
     public Sprite()
     {
         visible = true;
+        hit = false;
+        recoil = 0;
     }
     
-    public int getX()
+    public double getX()
     {
-        return (int)bounds.getX();
+        return bounds.getX();
     }
     
-    public int getY()
+    public double getY()
     {
-        return (int)bounds.getY();
+        return bounds.getY();
     }
     
-    public Rectangle getBound()
+    public Rectangle getBounds()
     {
         return bounds;
     }
@@ -32,6 +36,11 @@ public class Sprite
     public boolean isVisible()
     {
         return visible;
+    }
+    
+    public boolean isHit()
+    {
+        return hit;
     }
     
     public int getWidth()
@@ -42,6 +51,11 @@ public class Sprite
     public int getHeight()
     {
         return height;
+    }
+    
+    public void setHit(boolean hit)
+    {
+        this.hit = hit;
     }
     
     public void setVisible(boolean visible)

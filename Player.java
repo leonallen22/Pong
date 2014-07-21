@@ -17,7 +17,23 @@ public class Player extends Sprite
     
     public void move()
     {
-        bounds.translate(dx, 0);
+        if(!hit && recoil == 0)
+            bounds.translate(dx, 0);
+        
+        else if(hit && recoil < 10)
+        {
+            bounds.translate(dx, 1);
+            ++recoil;
+        }
+        
+        else if(!hit && recoil != 0)
+        {
+            bounds.translate(dx, -1);
+            --recoil;
+        }
+        
+        else
+            hit = false;
     }
     
     public void reset()

@@ -402,6 +402,9 @@ public class Board extends JPanel implements Runnable
             ball.setReturned(true);
             audio.playSound(1);
             
+            if(!player.isHit())
+                player.setHit(true);
+            
             if(relativeintersect <= -30)
             {
                 if(ball_y <= player_y+2)
@@ -521,6 +524,9 @@ public class Board extends JPanel implements Runnable
             double relativeintersect = (opponent.getWidth()/2 + (opponent_x-1)) - ball_x - 5;
             ball.setReturned(false);
             audio.playSound(1);
+            
+            if(!opponent.isHit())
+                opponent.setHit(true);
             
             if(relativeintersect <= -30)
             {
