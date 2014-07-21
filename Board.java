@@ -126,6 +126,14 @@ public class Board extends JPanel implements Runnable
         opponent.reset();
         ball.reset();
         ball.setVisible(true);
+    }
+    
+    public void resetGame()
+    {
+        player.reset();
+        opponent.reset();
+        ball.reset();
+        ball.setVisible(true);
         playerScore = 0;
         opponentScore = 0;
     }
@@ -155,11 +163,13 @@ public class Board extends JPanel implements Runnable
         FontMetrics m = getFontMetrics(small);
         String hint_1 = "Press Space to serve";
         String hint_2 = "Press R to restart game";
+        String hint_3 = "Use Left & Right Arrows to control paddle";
         
         g.setColor(Color.green);
         g.setFont(small);
-        g.drawString(hint_1, ((BOARD_WIDTH - m.stringWidth(hint_1)) / 2)+30, BOARD_HEIGHT/2 - 50);
+        g.drawString(hint_1, ((BOARD_WIDTH - m.stringWidth(hint_1)) / 2)+30, BOARD_HEIGHT/2 - 25);
         g.drawString(hint_2, ((BOARD_WIDTH - m.stringWidth(hint_2)) / 2)+30, BOARD_HEIGHT/2);
+        g.drawString(hint_3, ((BOARD_WIDTH - m.stringWidth(hint_3)) / 2)+30, BOARD_HEIGHT/2 + 25);
     }
     
     public void paint(Graphics g)
@@ -725,7 +735,7 @@ public class Board extends JPanel implements Runnable
             
             else if(key == KeyEvent.VK_R)
             {
-                resetRound();
+                resetGame();
                 inGame = true;
                 showHint = true;
             }
