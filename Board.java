@@ -16,7 +16,6 @@ public class Board extends JPanel implements Runnable
     private Player player;
     private Opponent opponent;
     private Ball ball;
-    private String gameOver = "Game Over";
     private Thread animator;
     private boolean inGame = true;
     private final int BOARD_WIDTH = 840;
@@ -125,11 +124,21 @@ public class Board extends JPanel implements Runnable
         ball.setVisible(true);
     }
     
-    public void gameOver(Graphics g)
+    public void gameOver()
     {
-        Font small = new Font("Helvetica", Font.BOLD, 60);
+        Graphics g = this.getGraphics();
+        Font small = new Font("Helvetica", Font.BOLD, 46);
         FontMetrics m = getFontMetrics(small);
+        String gameOver = "Game Over";
         
+        if(playerScore > opponentScore)
+            gameOver = "You Win!";
+        
+        else
+            gameOver = "You Lose!";
+        
+        g.setColor(Color.black);
+        g.fillRect(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
         g.setColor(Color.green);
         g.setFont(small);
         g.drawString(gameOver, (BOARD_WIDTH - m.stringWidth(gameOver)) / 2, BOARD_HEIGHT / 2);
@@ -150,13 +159,10 @@ public class Board extends JPanel implements Runnable
             drawBall(g);
             drawScore(g);
             renderParticles(g);
-            
-            Toolkit.getDefaultToolkit().sync();
-            g.dispose();
         }
         
-        else
-            gameOver(g);
+        Toolkit.getDefaultToolkit().sync();
+        g.dispose();
     }
     
     public void addParticle(int x, int y, int direction)
@@ -282,7 +288,7 @@ public class Board extends JPanel implements Runnable
         
         for(int i=0; i < 1000; ++i)
         {
-            life = (int)(Math.random()*70);
+            life = (int)(Math.random()*60);
             
             if(Math.random() < 0.5)
                 particle_dx = (int)(Math.random()*-4);
@@ -312,9 +318,7 @@ public class Board extends JPanel implements Runnable
     public void renderParticles(Graphics g)
     {        
         for(int i=0; i < particles.size(); ++i)
-        {
             particles.get(i).render(g);
-        }
     }
     
     public void cycle()
@@ -322,8 +326,8 @@ public class Board extends JPanel implements Runnable
         player.move();
         opponent.move(ball);
         ball.move();
-        checkCollision();
         updateParticles();
+        checkCollision();
     }
     
     public void checkCollision()
@@ -372,6 +376,9 @@ public class Board extends JPanel implements Runnable
             addBurst((int)ball_x, (int)ball_y, 1);
             
             ++playerScore;
+            
+            if(playerScore >= 10)
+                inGame = false;
         }
         
         else if(ball_y > BOARD_HEIGHT)
@@ -382,25 +389,41 @@ public class Board extends JPanel implements Runnable
             addBurst((int)ball_x, (int)ball_y, 0);
             
             ++opponentScore;
+            
+            if(opponentScore >= 10)
+                inGame = false;
         }
         
         else if(ballbound.intersects(playerbound))
         {
+            int player_y = (int)player.getY();
             int dy = ball.getdy();
-            double relativeintersect = (player.getWidth()/2 + (player_x-1)) - ball_x - 5;
+            double relativeintersect = (player.getWidth()/2 + (player_x-1)) - ball_x-5;
             ball.setReturned(true);
             audio.playSound(1);
             
             if(relativeintersect <= -30)
             {
-                ball.setdy(-dy);
-                ball.setdx(6);
+                if(ball_y <= player_y+2)
+                {
+                    ball.setdy(-dy);
+                    ball.setdx(6);
+                }
+                
+                else
+                    ball.setdx(6);
             }
             
             else if(relativeintersect <= -25)
             {
-                ball.setdy(-dy);
-                ball.setdx(5);
+                if(ball_y <= player_y+2)
+                {
+                    ball.setdy(-dy);
+                    ball.setdx(5);
+                }
+                
+                else
+                    ball.setdx(5);
             }
             
             else if(relativeintersect <= -19)
@@ -465,14 +488,26 @@ public class Board extends JPanel implements Runnable
             
             else if(relativeintersect <= 30)
             {
-                ball.setdy(-dy);
-                ball.setdx(-5);
+                if(ball_y <= player_y+2)
+                {
+                    ball.setdy(-dy);
+                    ball.setdx(-5);
+                }
+                
+                else
+                    ball.setdx(-5);
             }
             
             else
             {
-                ball.setdy(-dy);
-                ball.setdx(-6);
+                if(ball_y <= player_y+2)
+                {
+                    ball.setdy(-dy);
+                    ball.setdx(-6);
+                }
+                
+                else
+                    ball.setdx(-6);
             }
             
             for(int i=0; i < BURST; ++i)
@@ -481,6 +516,7 @@ public class Board extends JPanel implements Runnable
         
         else if(ballbound.intersects(opponentbound))
         {
+            int opponent_y = (int)(opponent.getY()-19);
             int dy = ball.getdy();
             double relativeintersect = (opponent.getWidth()/2 + (opponent_x-1)) - ball_x - 5;
             ball.setReturned(false);
@@ -488,14 +524,26 @@ public class Board extends JPanel implements Runnable
             
             if(relativeintersect <= -30)
             {
-                ball.setdy(-dy);
-                ball.setdx(6);
+                if(ball_y <= opponent_y+2)
+                {
+                    ball.setdy(-dy);
+                    ball.setdx(6);
+                }
+                
+                else
+                    ball.setdx(6);
             }
             
             else if(relativeintersect <= -25)
             {
-                ball.setdy(-dy);
-                ball.setdx(5);
+                if(ball_y <= opponent_y+2)
+                {
+                    ball.setdy(-dy);
+                    ball.setdx(5);
+                }
+                
+                else
+                    ball.setdx(5);
             }
             
             else if(relativeintersect <= -19)
@@ -560,14 +608,26 @@ public class Board extends JPanel implements Runnable
             
             else if(relativeintersect <= 30)
             {
-                ball.setdy(-dy);
-                ball.setdx(-5);
+                if(ball_y >= opponent_y-2)
+                {
+                    ball.setdy(-dy);
+                    ball.setdx(-5);
+                }
+                
+                else
+                    ball.setdx(-5);
             }
             
             else
             {
-                ball.setdy(-dy);
-                ball.setdx(-6);
+                if(ball_y >= opponent_y-2)
+                {
+                    ball.setdy(-dy);
+                    ball.setdx(-6);
+                }
+                
+                else
+                    ball.setdx(-6);
             }
             
             for(int i=0; i < BURST; ++i)
@@ -603,6 +663,8 @@ public class Board extends JPanel implements Runnable
             
             beforeTime = System.currentTimeMillis();
         }
+        
+        gameOver();
     }
  
     private class TAdapter extends KeyAdapter
