@@ -18,6 +18,7 @@ public class Board extends JPanel implements Runnable
     private Ball ball;
     private Thread animator;
     private boolean inGame = true;
+    private boolean showHint = true;
     private final int BOARD_WIDTH = 840;
     private final int BOARD_HEIGHT = 900;
     private final int DELAY = 6;
@@ -52,7 +53,10 @@ public class Board extends JPanel implements Runnable
         opponentScore = 0;
         
         if(animator == null || !inGame)
+        {
             animator = new Thread(this);
+            animator.start();
+        }
     }
         
     public void drawPlayer(Graphics g)
@@ -122,11 +126,12 @@ public class Board extends JPanel implements Runnable
         opponent.reset();
         ball.reset();
         ball.setVisible(true);
+        playerScore = 0;
+        opponentScore = 0;
     }
     
-    public void gameOver()
+    public void gameOver(Graphics g)
     {
-        Graphics g = this.getGraphics();
         Font small = new Font("Helvetica", Font.BOLD, 46);
         FontMetrics m = getFontMetrics(small);
         String gameOver = "Game Over";
@@ -141,7 +146,20 @@ public class Board extends JPanel implements Runnable
         g.fillRect(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
         g.setColor(Color.green);
         g.setFont(small);
-        g.drawString(gameOver, (BOARD_WIDTH - m.stringWidth(gameOver)) / 2, BOARD_HEIGHT / 2);
+        g.drawString(gameOver, ((BOARD_WIDTH - m.stringWidth(gameOver)) / 2)+30, BOARD_HEIGHT / 2);
+    }
+    
+    public void drawHint(Graphics g)
+    {
+        Font small = new Font("Helvetica", Font.BOLD, 14);
+        FontMetrics m = getFontMetrics(small);
+        String hint_1 = "Press Space to serve";
+        String hint_2 = "Press R to restart game";
+        
+        g.setColor(Color.green);
+        g.setFont(small);
+        g.drawString(hint_1, ((BOARD_WIDTH - m.stringWidth(hint_1)) / 2)+30, BOARD_HEIGHT/2 - 50);
+        g.drawString(hint_2, ((BOARD_WIDTH - m.stringWidth(hint_2)) / 2)+30, BOARD_HEIGHT/2);
     }
     
     public void paint(Graphics g)
@@ -151,12 +169,24 @@ public class Board extends JPanel implements Runnable
         g.setColor(Color.black);
         g.fillRect(0,  0, BOARD_WIDTH, BOARD_HEIGHT);
         g.setColor(Color.green);
-                
+        
         if(inGame)
         {
             drawPlayer(g);
             drawOpponent(g);
             drawBall(g);
+            drawScore(g);
+            renderParticles(g);
+            
+            if(showHint)
+                drawHint(g);
+        }
+        
+        else
+        {
+            gameOver(g);
+            drawPlayer(g);
+            drawOpponent(g);
             drawScore(g);
             renderParticles(g);
         }
@@ -323,9 +353,19 @@ public class Board extends JPanel implements Runnable
     
     public void cycle()
     {
-        player.move();
-        opponent.move(ball);
-        ball.move();
+        if(inGame)
+        {
+            if(ball.isServed())
+            {
+                player.move();
+                opponent.move(ball);
+                ball.move();
+            }
+            
+            if(playerScore >= 10 || opponentScore >= 10)
+                inGame = false;
+        }
+        
         updateParticles();
         checkCollision();
     }
@@ -376,9 +416,6 @@ public class Board extends JPanel implements Runnable
             addBurst((int)ball_x, (int)ball_y, 1);
             
             ++playerScore;
-            
-            if(playerScore >= 10)
-                inGame = false;
         }
         
         else if(ball_y > BOARD_HEIGHT)
@@ -389,9 +426,6 @@ public class Board extends JPanel implements Runnable
             addBurst((int)ball_x, (int)ball_y, 0);
             
             ++opponentScore;
-            
-            if(opponentScore >= 10)
-                inGame = false;
         }
         
         else if(ballbound.intersects(playerbound))
@@ -647,7 +681,7 @@ public class Board extends JPanel implements Runnable
 
         beforeTime = System.currentTimeMillis();
 
-        while (inGame)
+        while(true)
         {
             repaint();
             cycle();
@@ -669,8 +703,6 @@ public class Board extends JPanel implements Runnable
             
             beforeTime = System.currentTimeMillis();
         }
-        
-        gameOver();
     }
  
     private class TAdapter extends KeyAdapter
@@ -685,11 +717,18 @@ public class Board extends JPanel implements Runnable
             int key = e.getKeyCode();
             player.keyPressed(e);
             
-            if(key == KeyEvent.VK_SPACE && !animator.isAlive())
-                animator.start();
+            if(key == KeyEvent.VK_SPACE)
+            {
+                ball.setServed(true);
+                showHint = false;
+            }
             
             else if(key == KeyEvent.VK_R)
+            {
                 resetRound();
+                inGame = true;
+                showHint = true;
+            }
         }
     }
 }
