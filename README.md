@@ -1,4 +1,4 @@
 WallBall
 ========
 
-Pong Clone minus opponent
+Pong Clone
