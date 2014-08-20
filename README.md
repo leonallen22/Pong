@@ -1,4 +1,0 @@
-WallBall
-========
-
-Pong Clone
